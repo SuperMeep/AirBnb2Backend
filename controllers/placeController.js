@@ -70,8 +70,6 @@ const createPlace = asyncHandler(async (req, res) => {
     owner,
   });
 
-  console.log("Image data received:", imageUrls);
-  console.log(place);
   res.status(200).json({ place });
 });
 // delete a book

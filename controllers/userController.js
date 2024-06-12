@@ -1,25 +1,11 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const validator = require("validator");
 const asyncHandler = require("express-async-handler");
 
 const signupUser = asyncHandler(async (req, res) => {
   // Validate and extract user data from the request body
   const { name, email, password, role } = req.body;
-
-  if (!email || !password) {
-    res.status(409);
-    throw new Error("Please add all fields");
-  }
-  if (!validator.isEmail(email)) {
-    res.status(400);
-    throw new Error("Email not valid");
-  }
-  if (!validator.isStrongPassword(password)) {
-    res.status(400);
-    throw new Error("Password not strong enough");
-  }
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -67,21 +53,16 @@ const loginUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "Invalid request body" });
   }
 
-  if (!email || !password) {
-    res.status(409);
-    throw new Error("Please add all fields");
-  }
-
   const user = await User.findOne({ email });
   if (!user) {
     res.status(409);
-    throw new Error("Incorrect email");
+    throw new Error("Incorrect email or password");
   }
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     res.status(403);
-    throw new Error("Incorrect password");
+    throw new Error("Incorrect email or password");
   }
 
   const userId = user._id;
