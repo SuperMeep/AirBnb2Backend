@@ -13,15 +13,18 @@ const signupUser = asyncHandler(async (req, res) => {
     throw new Error("Please add all fields");
   }
   if (!validator.isEmail(email)) {
+    res.status(400);
     throw new Error("Email not valid");
   }
   if (!validator.isStrongPassword(password)) {
+    res.status(400);
     throw new Error("Password not strong enough");
   }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("User already existsz");
   }
 
   // Hash the password
